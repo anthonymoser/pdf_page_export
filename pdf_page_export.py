@@ -149,7 +149,7 @@ st.set_page_config(
 )
 initialize_db()
 # st.text('Export PDF pages as new files')
-with open("readme.md", "r") as f:
+with open("README.md", "r") as f:
     fileString = f.read()
 main_content = st.markdown(fileString)
 datafile = st.sidebar.file_uploader("Upload PDF",type=['pdf'])
