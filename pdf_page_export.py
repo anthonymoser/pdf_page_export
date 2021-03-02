@@ -148,7 +148,10 @@ st.set_page_config(
     page_icon=None,  # String, anything supported by st.image, or None.
 )
 initialize_db()
-st.text('Export PDF pages as new files')
+# st.text('Export PDF pages as new files')
+with open("readme.md", "r") as f:
+    fileString = f.read()
+main_content = st.markdown(fileString)
 datafile = st.sidebar.file_uploader("Upload PDF",type=['pdf'])
 show_pdf = st.sidebar.checkbox("Show PDF")
 filename = st.sidebar.text_input("Export name: ")
