@@ -150,6 +150,7 @@ st.set_page_config(
 initialize_db()
 st.text('Export PDF pages as new files')
 datafile = st.sidebar.file_uploader("Upload PDF",type=['pdf'])
+show_pdf = st.sidebar.checkbox("Show PDF")
 filename = st.sidebar.text_input("Export name: ")
 page_list = st.sidebar.text_input("Pages: ")
 add_new_export = st.sidebar.button('Add export')
@@ -162,9 +163,9 @@ if datafile is not None:
     source_file = datafile.name
     with open(source_file, "rb") as f:
         base64_pdf = base64.b64encode(f.read()).decode('utf-8')
-
-    pdf_display = F'<embed src="data:application/pdf;base64,{base64_pdf}" width="800" height="800" type="application/pdf">'
-    st.markdown(pdf_display, unsafe_allow_html=True)
+    if show_pdf:
+        pdf_display = F'<embed src="data:application/pdf;base64,{base64_pdf}" width="800" height="800" type="application/pdf">'
+        st.markdown(pdf_display, unsafe_allow_html=True)
 
     exports = get_exports(source_file)
     update_export_list(exports)
