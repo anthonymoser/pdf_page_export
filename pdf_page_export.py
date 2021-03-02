@@ -141,6 +141,14 @@ def get_zip_link(download_filename):
     href = f'<a href="data:file/zip;base64,{b64}" download="{download_filename}">{download_filename}</a>'
     return href
 
+@st.cache
+def get_embed(source_file):
+    with open(source_file, "rb") as f:
+        base64_pdf = base64.b64encode(f.read()).decode('utf-8')
+    pdf_display = F'<embed src="data:application/pdf;base64,{base64_pdf}" width="800" height="800" type="application/pdf">'
+    return pdf_display
+
+
 st.set_page_config(
     layout="wide",  # Can be "centered" or "wide". In the future also "dashboard", etc.
     initial_sidebar_state="expanded",  # Can be "auto", "expanded", "collapsed"
@@ -150,8 +158,8 @@ st.set_page_config(
 initialize_db()
 # st.text('Export PDF pages as new files')
 with open("README.md", "r") as f:
-    fileString = f.read()
-main_content = st.markdown(fileString)
+    readme = f.read()
+
 datafile = st.sidebar.file_uploader("Upload PDF",type=['pdf'])
 show_pdf = st.sidebar.checkbox("Show PDF")
 filename = st.sidebar.text_input("Export name: ")
@@ -164,14 +172,15 @@ if datafile is not None:
     file_details = {"FileName":datafile.name,"FileType":datafile.type}
     save_uploadedfile(datafile)
     source_file = datafile.name
-    with open(source_file, "rb") as f:
-        base64_pdf = base64.b64encode(f.read()).decode('utf-8')
     if show_pdf:
-        pdf_display = F'<embed src="data:application/pdf;base64,{base64_pdf}" width="800" height="800" type="application/pdf">'
-        st.markdown(pdf_display, unsafe_allow_html=True)
-
+        pdf_display = get_embed(source_file)
+        main_content = st.markdown(pdf_display, unsafe_allow_html=True)
+    else:
+        main_content = st.empty()
     exports = get_exports(source_file)
     update_export_list(exports)
+else:
+    main_content = st.markdown(readme)
 
 if add_new_export:
     add_export(filename, page_list, exports)
